@@ -4,90 +4,64 @@ using EventManagementPortal.Models;
 
 namespace EventManagementPortal.Data;
 
-/// <summary>
-/// Database context - manages database connection and operations
-/// Inherits from IdentityDbContext to get all Identity tables (Users, Roles, etc.)
-/// </summary>
+// DB Context manages database connection and operations
+// Inherits from IdentityDbContext to get all Identity tables (Users, Roles e.t.c)
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    // Constructor - receives configuration options from Program.cs
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) //Constructor (recieves configuration options from Program.cs)
     {
+
     }
 
     // DbSets represent tables in the database
     // Each DbSet<T> becomes a table named after the property (Events, Guests)
 
-    /// <summary>
-    /// Events table - stores all events created by organisers
-    /// </summary>
-    public DbSet<Event> Events { get; set; }
+    public DbSet<Event> Events { get; set; } //Events table stores all events created by Organizers
 
-    /// <summary>
-    /// Guests table - stores guest registrations for events
-    /// </summary>
-    public DbSet<Guest> Guests { get; set; }
+    public DbSet<Guest> Guests { get; set; } //Guests table stores guest registration for events
 
-    /// <summary>
-    /// Called when the model is being created
-    /// Used to configure relationships, constraints, and seed data
-    /// </summary>
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder) //Used to configure relationships , constratints and seed data
     {
-        // Call base method to configure Identity tables
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder); //Call base method to configure Identity tables
 
-        // ========================================
-        // CONFIGURE EVENT ENTITY
-        // ========================================
+
+        //Configure Event Entity
         modelBuilder.Entity<Event>(entity =>
         {
-            // Set the table name
-            entity.ToTable("Events");
+            entity.ToTable("Events"); //Set the table name
 
-            // Configure the relationship between Event and ApplicationUser
-            // One user (Organiser) can create many events
-            entity.HasOne(e => e.CreatedBy)               // Each event has one creator
-                .WithMany(u => u.CreatedEvents)            // Each user has many events
-                .HasForeignKey(e => e.CreatedByUserId)     // Foreign key property
-                .OnDelete(DeleteBehavior.Restrict);        // Don't allow deleting user if they have events
+            entity.HasOne(e => e.CreatedBy)                 //Each event has one creator
+                .WithMany(u => u.CreatedEvents)             //Each user has many events
+                .HasForeignKey(e => e.CreatedByUserId)      //Foreign Key property
+                .OnDelete(DeleteBehavior.Restrict);         //If event is deleted, delete its guests too
 
-            // Configure the relationship between Event and Guests
-            // One event can have many guests
-            entity.HasMany(e => e.Guests)                  // Each event has many guests
-                .WithOne(g => g.Event)                     // Each guest belongs to one event
-                .HasForeignKey(g => g.EventId)             // Foreign key property
-                .OnDelete(DeleteBehavior.Cascade);         // If event is deleted, delete its guests too
+            entity.HasMany(e => e.Guests)           //Each event has many guests
+                .WithOne(g => g.Event)              //Each guest belongs to one event
+                .HasForeignKey(g => g.EventId)      //Foreign key 
+                .OnDelete(DeleteBehavior.Cascade);  //If event is deleted, delete its guests too
 
-            // Create index on CreatedByUserId for faster queries
+            //Create index on CreatedByUserId for faster queries
             entity.HasIndex(e => e.CreatedByUserId);
 
-            // Create index on EventDate for faster date-based queries
+            //Create index on EventDate for faster data-based queries 
             entity.HasIndex(e => e.EventDate);
         });
 
-        // ========================================
-        // CONFIGURE GUEST ENTITY
-        // ========================================
+
+        //Configure guest entity
         modelBuilder.Entity<Guest>(entity =>
         {
-            // Set the table name
-            entity.ToTable("Guests");
+            entity.ToTable("Guests"); //Set table name
 
-            // Create index on EventId for faster queries when fetching guests for an event
-            entity.HasIndex(g => g.EventId);
+            entity.HasIndex(g => g.EventId); //Create an index on EventId for faster queries when fetching guests
 
-            // Create index on Email to quickly check if guest is already registered
-            entity.HasIndex(g => g.Email);
+            entity.HasIndex(g => g.Email);  //Create index on Email to quickly check if guest is already registered
         });
 
-        // ========================================
-        // CONFIGURE APPLICATION USER
-        // ========================================
+
+        //Configure Application User
         modelBuilder.Entity<ApplicationUser>(entity =>
         {
-            // Add index on FullName for searching users
             entity.HasIndex(u => u.FullName);
         });
     }
