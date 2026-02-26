@@ -1,0 +1,89 @@
+@model EventManagementPortal.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Login</h2>
+                <p class="mb-0">Sign in to your account</p>
+            </div>
+            <div class="card-body">
+                <!-- 
+                    Display success/info messages
+                    TempData persists for one request (perfect for redirects)
+                -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <form asp-action="Login" asp-controller="Account" method="post">
+                    <!-- 
+                        Display all validation errors at the top
+                        Includes both model-level and field-level errors
+                    -->
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <!-- Hidden field to preserve return URL -->
+                    <input type="hidden" asp-for="ReturnUrl" />
+
+                    <!-- Email Field -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" autofocus />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-group mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" placeholder="Enter your password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- Remember Me Checkbox -->
+                    <div class="form-group mb-3 form-check">
+                        <!-- 
+                            Checkbox for "Remember Me"
+                            Keeps user logged in for longer period
+                        -->
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label"></label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-group mb-3">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+
+                    <!-- Links -->
+                    <div class="text-center">
+                        <p>Don't have an account? 
+                            <a asp-action="Register" asp-controller="Account">Register here</a>
+                        </p>
+                    </div>
+                </form>
+
+                <!-- Default Admin Credentials Info Box -->
+                <div class="alert alert-info mt-3" role="alert">
+                    <strong>Default Admin Account:</strong><br/>
+                    Email: admin@eventportal.com<br/>
+                    Password: Admin@123
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
