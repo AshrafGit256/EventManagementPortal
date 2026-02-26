@@ -3,15 +3,146 @@
 }
 
 <div class="container mt-4">
-    <h1>Admin Dashboard</h1>
-    
-    <p>Total Events: @ViewBag.TotalEvents</p>
-    <p>Total Organisers: @ViewBag.TotalOrganisers</p>
-    <p>Total Guests: @ViewBag.TotalGuests</p>
-    
-    <hr />
-    
-    <a asp-action="CreateOrganiser" class="btn btn-primary">Create Organiser</a>
-    <a asp-action="ManageOrganisers" class="btn btn-success">Manage Organisers</a>
-    <a asp-action="AllEvents" class="btn btn-info">All Events</a>
+    <h1 class="mb-4">
+        <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+    </h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <!-- Total Events Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Total Events</h5>
+                            <h2 class="mb-0">@ViewBag.TotalEvents</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-calendar fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="AllEvents" class="text-white text-decoration-none">
+                        View All Events <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Organisers Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Total Organisers</h5>
+                            <h2 class="mb-0">@ViewBag.TotalOrganisers</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-users fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="ManageOrganisers" class="text-white text-decoration-none">
+                        Manage Organisers <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Guests Card -->
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">Total Guests</h5>
+                            <h2 class="mb-0">@ViewBag.TotalGuests</h2>
+                        </div>
+                        <div>
+                            <i class="fas fa-user-friends fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a asp-action="CreateOrganiser" class="btn btn-primary me-2">
+                        <i class="fas fa-user-plus"></i> Create New Organiser
+                    </a>
+                    <a asp-action="AllEvents" class="btn btn-info me-2">
+                        <i class="fas fa-list"></i> View All Events
+                    </a>
+                    <a asp-action="ManageOrganisers" class="btn btn-success">
+                        <i class="fas fa-users-cog"></i> Manage Organisers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar-check"></i> Upcoming Events
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.UpcomingEvents != null && ((List<EventManagementPortal.Models.Event>)ViewBag.UpcomingEvents).Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Organiser</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ev in (List<EventManagementPortal.Models.Event>)ViewBag.UpcomingEvents)
+                                    {
+                                        <tr>
+                                            <td>@ev.Title</td>
+                                            <td>@ev.EventDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@ev.Location</td>
+                                            <td>@ev.CreatedBy.FullName</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No upcoming events scheduled.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
