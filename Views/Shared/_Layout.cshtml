@@ -12,24 +12,129 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EventManagementPortal</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+    <div class="container-fluid">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+            <i class="fas fa-calendar-alt"></i> Event Management Portal
+        </a>
+        
+        <!-- Mobile toggle button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" 
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <!-- Left side navigation -->
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                
+                <!-- 
+                    Show different links based on user authentication and role
+                    User.Identity.IsAuthenticated: checks if user is logged in
+                    User.IsInRole(): checks if user has specific role
+                -->
+                
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <!-- Links for logged-in users -->
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <!-- Admin-only links -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Dashboard">
+                                <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="CreateOrganiser">
+                                <i class="fas fa-user-plus"></i> Create Organiser
+                            </a>
                         </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AllEvents">
+                                <i class="fas fa-list"></i> All Events
+                            </a>
+                        </li>
+                    }
+                    
+                    @if (User.IsInRole("Organiser"))
+                    {
+                        <!-- Organiser-only links -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Events" asp-action="Index">
+                                <i class="fas fa-calendar"></i> My Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Events" asp-action="Create">
+                                <i class="fas fa-plus-circle"></i> Create Event
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+            
+            <!-- Right side navigation - Login/Register or User menu -->
+            <ul class="navbar-nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <!-- User is logged in - show username and logout -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user"></i> @User.Identity.Name
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li>
+                                <span class="dropdown-item-text">
+                                    <strong>Role:</strong> 
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <span class="badge bg-danger">Admin</span>
+                                    }
+                                    else if (User.IsInRole("Organiser"))
+                                    {
+                                        <span class="badge bg-primary">Organiser</span>
+                                    }
+                                </span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <!-- 
+                                    Logout must be POST to prevent CSRF attacks
+                                    Using a form with POST method
+                                -->
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <!-- User is NOT logged in - show Login and Register links -->
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
