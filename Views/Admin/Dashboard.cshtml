@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h1>Admin Dashboard</h1>
+    
+    <p>Total Events: @ViewBag.TotalEvents</p>
+    <p>Total Organisers: @ViewBag.TotalOrganisers</p>
+    <p>Total Guests: @ViewBag.TotalGuests</p>
+    
+    <hr />
+    
+    <a asp-action="CreateOrganiser" class="btn btn-primary">Create Organiser</a>
+    <a asp-action="ManageOrganisers" class="btn btn-success">Manage Organisers</a>
+    <a asp-action="AllEvents" class="btn btn-info">All Events</a>
+</div>
