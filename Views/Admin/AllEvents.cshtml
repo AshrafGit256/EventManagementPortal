@@ -1,0 +1,85 @@
+@model List<EventManagementPortal.Models.Event>
+
+@{
+    ViewData["Title"] = "All Events";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">All Events</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model != null && Model.Count > 0)
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Organiser</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ev in Model)
+                        {
+                            <tr>
+                                <td><strong>@ev.Title</strong></td>
+                                <td>@ev.EventDate.ToString("MMM dd, yyyy hh:mm tt")</td>
+                                <td>@ev.Location</td>
+                                <td>@ev.CreatedBy.FullName</td>
+                                <td>
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#eventModal@(ev.Id)">
+                                        View
+                                    </button>
+                                    <form asp-action="DeleteEvent" method="post" class="d-inline" 
+                                          onsubmit="return confirm('Delete this event?');">
+                                        <input type="hidden" name="id" value="@ev.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <div class="modal fade" id="eventModal@(ev.Id)" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title">@ev.Title</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Description:</strong></p>
+                                            <p>@ev.Description</p>
+                                            <hr />
+                                            <p><strong>Date:</strong> @ev.EventDate.ToString("dddd, MMMM dd, yyyy hh:mm tt")</p>
+                                            <p><strong>Location:</strong> @ev.Location</p>
+                                            <p><strong>Organiser:</strong> @ev.CreatedBy.FullName (@ev.CreatedBy.Email)</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No events found. Organisers can create events once their accounts are set up.
+                </div>
+            }
+        </div>
+    </div>
+</div>
