@@ -51,6 +51,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;                  // Reset expiration time on each request
 });
 
+// Add HttpClient for making HTTP requests
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // ========================================
